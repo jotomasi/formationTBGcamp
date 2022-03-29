@@ -25,6 +25,14 @@ public class Main extends Application {
     int ncol = 40;
     int nrow = 40;
     int sizeSquare = 15;
+
+    static Button buttonBottom(String strings, int left, int bottom){
+        Button button= new Button(strings);
+        button.setTranslateX(left);
+        button.setTranslateY(bottom);
+        return button;
+
+    }
     public void start(Stage stage) throws Exception {
         VBox root = new VBox();
         Scene scene = new Scene(root,ncol*sizeSquare+500, nrow*sizeSquare+ 100);
@@ -33,6 +41,11 @@ public class Main extends Application {
         root.setBackground(new Background(new BackgroundFill(Color.rgb(180, 180, 180), null, null)));
 
         //gridPane definition
+        GridPane pane = new GridPane();
+        pane.setVgap(1);
+        pane.setHgap(5);
+        //pane.setPadding(new Insets(1,0,0,1));
+        root.getChildren().add(pane);
         GridPane gridPane = new GridPane();
         gridPane.setVgap(1);
         gridPane.setHgap(1);
@@ -41,7 +54,6 @@ public class Main extends Application {
 
         //case to be drawn in gridPane
         Rectangle[][] gridDraw = new Rectangle [nrow][ncol];
-
 
         //init grid and gridPane
         Grid grid = new Grid(nrow,ncol);
@@ -54,10 +66,33 @@ public class Main extends Application {
 
             }
         }
+        pane.add(gridPane,0,0);
 
 
 
+        //create buttons
+        int left = -625;
+        int bottom = 350;
+        int stepwise = 15;
+        stage.setTitle("Game Life in the Grid");
 
+        Button StartStop = buttonBottom("Start/Stop",left,bottom);
+        pane.add(StartStop, 1, 0 );
+
+        Button NextStep = buttonBottom("NextStep",left+stepwise,bottom);
+        pane.add(NextStep,2,0 );
+
+        Button Insertion = buttonBottom("Insertion",left+2*stepwise,bottom);
+        pane.add(Insertion,3,0 );
+
+        Button Reset = buttonBottom("Reset",left+3*stepwise,bottom);
+        pane.add(Reset,4,0);
+
+        Button Rules = buttonBottom("Rules",left+4*stepwise,bottom);
+        pane.add(Rules,5,0);
+
+        Button Browse = buttonBottom("Browse",left+5*stepwise,bottom);
+        pane.add(Browse,6,0);
 
 
         stage.setScene(scene);
