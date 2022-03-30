@@ -23,7 +23,7 @@ public class Grid {
     // getter and setter
     public int getncol(){return this.ncol;}
     public int getnrow(){return this.nrow;}
-    public Cell getcell(int i, int j){return this.grid[i][j];}
+    public Cell getcell(int i, int j){return this.grid[i%nrow][j%ncol];}
 
     private void setncol(int n){this.ncol = n;}
     private void setnrow(int n){this.nrow = n;}
