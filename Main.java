@@ -22,78 +22,102 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     //@Override
-    int ncol = 40;
-    int nrow = 40;
-    int sizeSquare = 15;
+    private int ncol = 40;
+    private int nrow = 40;
+    private int sizeSquare = 15;
+    private int borderh = 10;
+    private int borderv = 20;
 
     static Button buttonBottom(String strings, int left, int bottom){
         Button button= new Button(strings);
-        button.setTranslateX(left);
-        button.setTranslateY(bottom);
+        button.setLayoutX(left);
+        button.setLayoutY(bottom);
+        button.setMinWidth(80);
+        button.setMaxWidth(200);
+        button.setPrefWidth(80);
+        button.setMinHeight(30);
+        button.setMaxHeight(500);
+        button.setPrefHeight(30);
+
+       // button.setMinSize(20,20);
+        //button.setMaxSize(50,100);
+        //button.setPrefSize(20,20);
+        button.setStyle("-fx-border-color: white;");
+        button.setStyle("-fx-background-color: rgb(180,180,180)");
         return button;
 
     }
+
+    private void paintGrid (GraphicsContext gc, Grid grid){
+        int r = 150;
+        int g = 150;
+        int b = 150;
+        for(int i = 0 ; i < grid.getnrow() ; i++){
+            for(int j = 0 ; j < grid.getncol() ; j++){
+
+                if(!grid.getcell(i,j).getLive()) {
+                    // gray no life here
+                    r = 150;
+                    g = 150;
+                    b = 150;
+                }
+                else { //yellow alive
+                    r = 200 ;
+                    g = 120;
+                    b = 0;
+                }
+                gc.setFill(Color.rgb(r,g,b));
+                gc.fillRect( borderh+i*(sizeSquare+1),  borderv+j*(sizeSquare+1),  sizeSquare, sizeSquare);
+            }
+        }
+    }
+
+    static void updateGrid(int i,int j){
+
+    }
+
     public void start(Stage stage) throws Exception {
-        VBox root = new VBox();
-        Scene scene = new Scene(root,ncol*sizeSquare+500, nrow*sizeSquare+ 100);
+        Group root = new Group();
+        Scene scene = new Scene(root,ncol*sizeSquare+500, nrow*sizeSquare+ 150);
+        Canvas canvas = new Canvas(ncol*sizeSquare+500, nrow*sizeSquare+ 150);
+        root.getChildren().add(canvas);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
         //background
-        root.setBackground(new Background(new BackgroundFill(Color.rgb(180, 180, 180), null, null)));
+        //root.setBackground(new Background(new BackgroundFill(Color.rgb(180, 180, 180), null, null)));
 
-        //gridPane definition
-        GridPane pane = new GridPane();
-        pane.setVgap(1);
-        pane.setHgap(5);
-        //pane.setPadding(new Insets(1,0,0,1));
-        root.getChildren().add(pane);
-        GridPane gridPane = new GridPane();
-        gridPane.setVgap(1);
-        gridPane.setHgap(1);
-        gridPane.setPadding(new Insets(1,0,0,1));
-        root.getChildren().add(gridPane);
 
-        //case to be drawn in gridPane
-        Rectangle[][] gridDraw = new Rectangle [nrow][ncol];
 
         //init grid and gridPane
         Grid grid = new Grid(nrow,ncol);
-        for(int i = 0 ; i < nrow ; i++){
-            for(int j = 0 ; j < ncol ; j++){
-                gridDraw[i][j] = new Rectangle(0,0,sizeSquare,sizeSquare);
-                if(!grid.getcell(i,j).getLive()) gridDraw[i][j].setFill(Color.rgb(150,150,150));
-                else gridDraw[i][j].setFill(Color.rgb(200, 120, 0));
-                gridPane.add(gridDraw[i][j], i, j);
+        grid.getcell(5,10).setLive(true);
+        //gc.drawImage
 
-            }
-        }
-        pane.add(gridPane,0,0);
-
-
+        paintGrid (gc,grid);
 
         //create buttons
-        int left = -625;
-        int bottom = 350;
-        int stepwise = 15;
-        stage.setTitle("Game Life in the Grid");
+        int left = borderh +5 ;
+        int bottom = nrow*(sizeSquare+1)+ borderv + 10;
+        int stepwise = 100;
+        stage.setTitle("Game Life on the Grid");
 
         Button StartStop = buttonBottom("Start/Stop",left,bottom);
-        pane.add(StartStop, 1, 0 );
+        root.getChildren().add(StartStop);
 
         Button NextStep = buttonBottom("NextStep",left+stepwise,bottom);
-        pane.add(NextStep,2,0 );
+        root.getChildren().add(NextStep);
 
         Button Insertion = buttonBottom("Insertion",left+2*stepwise,bottom);
-        pane.add(Insertion,3,0 );
+        root.getChildren().add(Insertion);
 
         Button Reset = buttonBottom("Reset",left+3*stepwise,bottom);
-        pane.add(Reset,4,0);
+        root.getChildren().add(Reset);
 
         Button Rules = buttonBottom("Rules",left+4*stepwise,bottom);
-        pane.add(Rules,5,0);
+        root.getChildren().add(Rules);
 
-        Button Browse = buttonBottom("Browse",left+5*stepwise,bottom);
-        pane.add(Browse,6,0);
-
+        Button BackUp = buttonBottom("BackUp",left+5*stepwise,bottom);
+        root.getChildren().add(BackUp);
 
         stage.setScene(scene);
         stage.show();
