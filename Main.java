@@ -267,10 +267,13 @@ public class Main extends Application {
         nextStep.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
-                ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
-                ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, tdeathLonelyness, tdeathOverpopulated));
-                updategrid(gc, grid, Lborn, Ldead);
+
+                if(!isrunning) {
+                    ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
+                    ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin, tbirthmax));
+                    ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, tdeathLonelyness, tdeathOverpopulated));
+                    updategrid(gc, grid, Lborn, Ldead);
+                }
             }
         });
 
