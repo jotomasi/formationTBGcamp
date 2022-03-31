@@ -1,24 +1,16 @@
-import Project.Cell;
 import Project.Grid;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.application.Application;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class Main extends Application {
     //@Override
@@ -28,6 +20,8 @@ public class Main extends Application {
     private int borderh = 10;
     private int borderv = 20;
 
+
+    // buttons functions
     private Button buttonBottom(String strings, int left, int bottom){
         Button button= new Button(strings);
 
@@ -43,6 +37,8 @@ public class Main extends Application {
 
     }
 
+
+    //graphics functions
     private void paintGrid (GraphicsContext gc, Grid grid){
         int r ;
         int g ;
@@ -67,7 +63,7 @@ public class Main extends Application {
         }
     }
 
-    private void updateCellByClick(GraphicsContext gc, Grid grid,int i,int j){
+    private void updateCell(GraphicsContext gc, Grid grid,int i,int j){
         int r ;
         int g ;
         int b ;
@@ -90,6 +86,116 @@ public class Main extends Application {
 
     }
 
+    private void resetCellByClick (GraphicsContext gc, Grid grid){
+        int r =150;
+        int g =150;
+        int b =150;
+        for(int i = 0 ; i < grid.getnrow() ; i++){
+            for(int j = 0 ; j < grid.getncol() ; j++){
+                grid.getcell(i,j).setLive(false);
+                grid.getcell(i,j).setLifeTime(false);
+                gc.setFill(Color.rgb(r,g,b));
+                gc.fillRect( borderh+i*(sizeSquare+1),  borderv+j*(sizeSquare+1),  sizeSquare, sizeSquare);
+            }
+        }
+    }
+
+
+    //Rules function and usefull fonction for Rules
+
+    private boolean neighborhoodAboveThresh(Grid grid, int i , int j , int t) {
+        int cmp = 0;
+        for(int k=0;k<=2;k++){
+            int l = (int) Math.ceil(k/2.0);
+            int c  = 1 - (int) Math.floor(k/2.0);
+            if(grid.getcell(i+l,j+c).getLive()) cmp++ ;
+            if(grid.getcell(i-l,j-c).getLive()) cmp++ ;
+        }
+        return cmp >= t;
+
+    }
+
+    private boolean neighborhoodBellowThresh(Grid grid, int i , int j , int t) {
+        int cmp = 0;
+        for(int k=0;k<=2;k++){
+            int l = (int) Math.ceil(k/2.0);
+            int c  = 1 - (int) Math.floor(k/2.0);
+            if(grid.getcell(i+l,j+c).getLive()) cmp++ ;
+            if(grid.getcell(i-l,j-c).getLive()) cmp++ ;
+        }
+        return cmp <= t;
+
+    }
+
+
+
+    private ArrayList<Integer[]> selectAliveCellIndex(Grid grid){
+        ArrayList<Integer[]> L = new ArrayList<Integer[]>();
+        for(int i=0; i<nrow;i++){
+            for(int j=0; j<ncol; j++){
+                if(grid.getcell(i,j).getLive()) L.add(new Integer[]{i, j});
+            }
+        }
+        return L;
+    }
+
+    private ArrayList<Integer[]> selectEmptyNeighborIndex(Grid grid,int i,int j){
+        ArrayList<Integer[]> Ln = new ArrayList<Integer[]>();
+        for(int k=0;k<=2;k++){
+            int l = (int) Math.ceil(k/2.0);
+            int c  = 1 - (int) Math.floor(k/2.0);
+            if(!grid.getcell(i+l,j+c).getLive()) Ln.add(new Integer[]{i+l,j+c}) ;
+            if(!grid.getcell(i-l,j-c).getLive()) Ln.add(new Integer[]{i-l,j-c});
+        }
+        return Ln;
+    }
+
+
+
+    private ArrayList<Integer[]> ListWillBorn(Grid grid, ArrayList<Integer[]> Lalive, int t){
+
+        ArrayList<Integer[]> L = new ArrayList<Integer[]>();
+        ArrayList<Integer[]> Ln;//list empty neighborhood
+
+        for(Integer[] index : Lalive){
+            Ln = new ArrayList<>( selectEmptyNeighborIndex(grid,index[0],index[1]));
+            for(Integer[] neighbor : Ln){
+                if(neighborhoodAboveThresh(grid,neighbor[0],neighbor[1],t )) L.add(neighbor);
+            }
+
+
+        };
+        return L;
+    }
+
+    private ArrayList<Integer[]> ListWillDead(Grid grid, ArrayList<Integer[]> Lalive, int tmin,int tmax){
+
+        ArrayList<Integer[]> L = new ArrayList<Integer[]>();
+        ArrayList<Integer[]> Ln;//list empty neighborhood
+
+        for(Integer[] index : Lalive){
+            Ln = new ArrayList<>( selectEmptyNeighborIndex(grid,index[0],index[1]));
+            for(Integer[] neighbor : Ln){
+                if(neighborhoodAboveThresh(grid,neighbor[0],neighbor[1],tmax )) L.add(neighbor);
+                if(neighborhoodBellowThresh(grid,neighbor[0],neighbor[1],tmin )) L.add(neighbor);
+            }
+
+
+        };
+        return L;
+    }
+    
+    private void updategrid(GraphicsContext gc, Grid  grid,ArrayList<Integer[]> Lborn,ArrayList<Integer[]> Ldie){
+        for(Integer [] indexborn : Lborn) updateCell(gc,grid,indexborn[0],indexborn[1]);
+        for(Integer [] indexdie : Ldie) updateCell(gc,grid,indexdie[0],indexdie[1]);
+    }
+        
+
+
+
+
+
+
     public void start(Stage stage) throws Exception {
         Group root = new Group();
         Scene scene = new Scene(root,ncol*sizeSquare+500, nrow*sizeSquare+ 150);
@@ -104,7 +210,7 @@ public class Main extends Application {
         Grid grid = new Grid(nrow,ncol);
         grid.getcell(5,10).setLive(true);
         paintGrid (gc,grid);
-        updateCellByClick(gc, grid, 5,10);
+        updateCell(gc, grid, 5,10);
         //updateCellByClick(gc, grid, 5,10);
 
         //create buttons
@@ -114,39 +220,50 @@ public class Main extends Application {
 
         stage.setTitle("Game Life on the Grid");
 
-        Button StartStop = buttonBottom("Start/Stop",left,bottom);
-        root.getChildren().add(StartStop);
+        Button startStop = buttonBottom("Start/Stop",left,bottom);
+        root.getChildren().add(startStop);
 
-        Button NextStep = buttonBottom("NextStep",left+stepwise,bottom);
-        root.getChildren().add(NextStep);
+        Button nextStep = buttonBottom("NextStep",left+stepwise,bottom);
+        root.getChildren().add(nextStep);
 
-        Button Insertion = buttonBottom("Insertion",left+2*stepwise,bottom);
-        root.getChildren().add(Insertion);
+        Button insertion = buttonBottom("Insertion",left+2*stepwise,bottom);
+        root.getChildren().add(insertion);
 
-        Button Reset = buttonBottom("Reset",left+3*stepwise,bottom);
-        root.getChildren().add(Reset);
+        Button reset = buttonBottom("Reset",left+3*stepwise,bottom);
+        reset.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                resetCellByClick(gc,grid);
+            }
+        });
+        root.getChildren().add(reset);
 
-        Button Rules = buttonBottom("Rules",left+4*stepwise,bottom);
-        root.getChildren().add(Rules);
+        Button rules = buttonBottom("Rules",left+4*stepwise,bottom);
+        root.getChildren().add(rules);
 
-        Button BackUp = buttonBottom("BackUp",left+5*stepwise,bottom);
-        root.getChildren().add(BackUp);
+        Button backUp = buttonBottom("BackUp",left+5*stepwise,bottom);
+        root.getChildren().add(backUp);
 
-/** add mouse */
-        scene.setOnMouseClicked(mouseEventpositon -> {
-            if (mouseEventpositon.getSceneX() <= borderh + nrow * (sizeSquare + 1) && mouseEventpositon.getSceneX() >= borderh
-                    && mouseEventpositon.getSceneY() <= borderv + ncol * (sizeSquare + 1) && mouseEventpositon.getSceneY() >= borderv) {
+/** click mouse*/
+        scene.setOnMouseClicked(mouseGridClick -> {
+            if (mouseGridClick.getSceneX() <= borderh + nrow * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
+                    && mouseGridClick.getSceneY() <= borderv + ncol * (sizeSquare + 1) && mouseGridClick.getSceneY() >= borderv) {
 
 
-                double coordx = mouseEventpositon.getSceneX();
-                double coordy = mouseEventpositon.getSceneY();
+                double coordx = mouseGridClick.getSceneX();
+                double coordy = mouseGridClick.getSceneY();
                 int icoordx = (int) (coordx - borderh - coordx % 1) / (sizeSquare + 1);
                 int icoordy = (int) (coordy - borderv - coordy % 1) / (sizeSquare + 1);
                 System.out.println(icoordx + "  " + icoordy);
-                updateCellByClick(gc, grid, icoordx, icoordy);
+                updateCell(gc, grid, icoordx, icoordy);
             }
         }
         );
+
+
+
+
+
 
 
 
