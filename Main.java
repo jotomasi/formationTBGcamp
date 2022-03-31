@@ -9,7 +9,6 @@ import javafx.application.Application;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -86,6 +85,30 @@ public class Main extends Application {
 
     }
 
+    private void updateBornedCell(GraphicsContext gc, Grid grid,int i,int j){
+        int r = 200 ;
+        int g =120;
+        int b =0;
+        int imod = i%grid.getnrow();
+        int jmod = j%grid.getncol();
+        grid.getcell(i,j).setLive(true);
+        gc.setFill(Color.rgb(r,g,b));
+        gc.fillRect( borderh+jmod*(sizeSquare+1),  borderv+imod*(sizeSquare+1),  sizeSquare, sizeSquare);
+
+    }
+
+    private void updateDeadCell(GraphicsContext gc, Grid grid,int i,int j){
+        int r = 150 ;
+        int g =150;
+        int b =150;
+        int imod = i%grid.getnrow();
+        int jmod = j%grid.getncol();
+        grid.getcell(i,j).setLive(false);
+        gc.setFill(Color.rgb(r,g,b));
+        gc.fillRect( borderh+jmod*(sizeSquare+1),  borderv+imod*(sizeSquare+1),  sizeSquare, sizeSquare);
+
+    }
+
     private void resetCellByClick (GraphicsContext gc, Grid grid){
         int r =150;
         int g =150;
@@ -106,10 +129,12 @@ public class Main extends Application {
     private boolean neighborhoodAboveThresh(Grid grid, int i , int j , int t) {
         int cmp = 0;
         for(int k=0;k<=2;k++){
-            int l = (int) Math.ceil(k/2.0);
+            int l = (int) Math.ceil(k/2.0)%2;
             int c  = 1 - (int) Math.floor(k/2.0);
             if(grid.getcell(i+l,j+c).getLive()) cmp++ ;
             if(grid.getcell(i-l,j-c).getLive()) cmp++ ;
+            if (l==1 && c==1 && grid.getcell(i+l,j-c).getLive() ) cmp++;
+            if (l==1 && c==1 && grid.getcell(i-l,j+c).getLive() ) cmp++;
         }
         return cmp >= t;
 
@@ -122,12 +147,12 @@ public class Main extends Application {
             int c  = 1 - (int) Math.floor(k/2.0);
             if(grid.getcell(i+l,j+c).getLive()) cmp++ ;
             if(grid.getcell(i-l,j-c).getLive()) cmp++ ;
+            if (l==1 && c==1 && grid.getcell(i+l,j-c).getLive() ) cmp++;
+            if (l==1 && c==1 && grid.getcell(i-l,j+c).getLive() ) cmp++;
         }
         return cmp <= t;
 
     }
-
-
 
     private ArrayList<Integer[]> selectAliveCellIndex(Grid grid){
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
@@ -144,8 +169,11 @@ public class Main extends Application {
         for(int k=0;k<=2;k++){
             int l = (int) Math.ceil(k/2.0);
             int c  = 1 - (int) Math.floor(k/2.0);
+            //System.out.println("l="+l+" , c = "+c);
             if(!grid.getcell(i+l,j+c).getLive()) Ln.add(new Integer[]{i+l,j+c}) ;
             if(!grid.getcell(i-l,j-c).getLive()) Ln.add(new Integer[]{i-l,j-c});
+            if (l==1 && c==1 && !grid.getcell(i+l,j-c).getLive() ) Ln.add(new Integer[]{i+l,j-c});
+            if (l==1 && c==1 && !grid.getcell(i-l,j+c).getLive() ) Ln.add(new Integer[]{i-l,j+c});
         }
         return Ln;
     }
@@ -161,8 +189,6 @@ public class Main extends Application {
             for(Integer[] neighbor : Ln){
                 if(neighborhoodAboveThresh(grid,neighbor[0],neighbor[1],t )) L.add(neighbor);
             }
-
-
         };
         return L;
     }
@@ -172,21 +198,17 @@ public class Main extends Application {
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         ArrayList<Integer[]> Ln;//list empty neighborhood
 
-        for(Integer[] index : Lalive){
-            Ln = new ArrayList<>( selectEmptyNeighborIndex(grid,index[0],index[1]));
-            for(Integer[] neighbor : Ln){
-                if(neighborhoodAboveThresh(grid,neighbor[0],neighbor[1],tmax )) L.add(neighbor);
-                if(neighborhoodBellowThresh(grid,neighbor[0],neighbor[1],tmin )) L.add(neighbor);
-            }
+        for(Integer[] index : Lalive) {
 
-
-        };
+            if (neighborhoodAboveThresh(grid, index[0], index[1], tmax)) L.add(index);
+            if (neighborhoodBellowThresh(grid, index[0], index[1], tmin)) L.add(index);
+        }
         return L;
     }
     
     private void updategrid(GraphicsContext gc, Grid  grid,ArrayList<Integer[]> Lborn,ArrayList<Integer[]> Ldie){
-        for(Integer [] indexborn : Lborn) updateCell(gc,grid,indexborn[0],indexborn[1]);
-        for(Integer [] indexdie : Ldie) updateCell(gc,grid,indexdie[0],indexdie[1]);
+        for(Integer [] indexborn : Lborn) updateBornedCell(gc,grid,indexborn[0],indexborn[1]);
+        for(Integer [] indexdie : Ldie) updateDeadCell(gc,grid,indexdie[0],indexdie[1]);
     }
         
 
@@ -208,8 +230,19 @@ public class Main extends Application {
         //init grid and draw it
         Grid grid = new Grid(nrow,ncol);
         grid.getcell(5,10).setLive(true);
+        grid.getcell(6,10).setLive(true);
+        ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
         paintGrid (gc,grid);
-        updateCell(gc, grid, 5,10);
+        ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid,L,2));
+//        for(Integer[] lb : Lborn){
+//            System.out.println("lborn "+ lb[0]+" "+lb[1]);
+//        }
+       ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid,L,0,0));
+//        for(Integer[] ld : Ldead){
+//            System.out.println("ldead "+ ld[0]+" "+ld[1]);
+//        }
+        updategrid(gc,grid,Lborn,Ldead);
+       // updateCell(gc, grid, 5,10);
         //updateCellByClick(gc, grid, 5,10);
 
         //create buttons
