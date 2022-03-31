@@ -278,6 +278,10 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 resetCellByClick(gc, grid);
+                if(isrunning) {
+                    isrunning = !isrunning;
+                    startStop.setText("Start");
+                }
             }
         });
         root.getChildren().add(reset);
