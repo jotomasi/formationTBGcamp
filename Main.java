@@ -1,9 +1,5 @@
 import Project.Grid;
-import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -11,15 +7,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.application.Application;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+
+
 
 public class Main extends Application {
     //@Override
@@ -34,10 +27,9 @@ public class Main extends Application {
     private int tdeathLonelyness = 1;
     private int tdeathOverpopulated = 4;
 
-    // TimeLine
-    public static Timeline actualisation;
 
-    // buttons functions
+
+    // button creation function
     private Button buttonBottom(String strings, int left, int bottom) {
         Button button = new Button(strings);
 
@@ -48,6 +40,21 @@ public class Main extends Application {
 
         button.setStyle("-fx-border-color: white;");
         button.setStyle("-fx-background-color: rgb(180,180,180)");
+
+        return button;
+
+    }
+
+    private Button buttonCipher(String strings, int left, int bottom) {
+        Button button = new Button(strings);
+
+        button.setLayoutX(left);
+        button.setLayoutY(bottom);
+        button.setMinWidth(10);
+        button.setMinHeight(30);
+
+        button.setStyle("-fx-border-color: white;");
+        button.setStyle("-fx-background-color: rgb(200,120,0)");
 
         return button;
 
@@ -137,6 +144,7 @@ public class Main extends Application {
             }
         }
     }
+
 
 
     //Rules function and usefull fonction for Rules
@@ -230,8 +238,8 @@ public class Main extends Application {
 
     public void start(Stage stage) throws Exception {
         Group root = new Group();
-        Scene scene = new Scene(root, ncol * sizeSquare + 500, nrow * sizeSquare + 150);
-        Canvas canvas = new Canvas(ncol * sizeSquare + 500, nrow * sizeSquare + 150);
+        Scene scene = new Scene(root, ncol * sizeSquare + 700, nrow * sizeSquare + 150);
+        Canvas canvas = new Canvas(ncol * sizeSquare + 700, nrow * sizeSquare + 150);
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -240,17 +248,17 @@ public class Main extends Application {
         Grid grid = new Grid(nrow, ncol);
         grid.getcell(0, 10).setLive(true);
         grid.getcell(6, 10).setLive(true);
-
         paintGrid(gc, grid);
+
+
 
         //create buttons
         int left = borderh + 5;
         int bottom = nrow * (sizeSquare + 1) + borderv + 10;
         int stepwise = 100;
+        int stepwisev = 40;
 
         stage.setTitle("Game Life on the Grid");
-
-
         Button startStop = buttonBottom("Start", left, bottom);
         root.getChildren().add(startStop);
         startStop.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -295,13 +303,52 @@ public class Main extends Application {
 
         Button rules = buttonBottom("Rules", left + 4 * stepwise, bottom);
         root.getChildren().add(rules);
+//        rules.setOnAction(e->{
+//
+//        });
+        int interCipher = 30;
+        Button minForBird = buttonBottom("Min number of neighbors to bird: "+tbirthmin,ncol*(sizeSquare+1)+borderh +10,borderv +20);
+        root.getChildren().add(minForBird);
+        Button zerotbmin = buttonCipher(""+0,ncol*(sizeSquare+1)+borderh+310,borderv +20);
+        root.getChildren().add(zerotbmin);
+        Button onetbmin = buttonCipher(""+1,ncol*(sizeSquare+1)+borderh+310+interCipher,borderv +20);
+        root.getChildren().add(onetbmin);
+        Button twotbmin = buttonCipher(""+2,ncol*(sizeSquare+1)+borderh+310+2*interCipher,borderv +20);
+        root.getChildren().add(twotbmin);
+        Button threetbmin = buttonCipher(""+3,ncol*(sizeSquare+1)+borderh+310+3*interCipher,borderv +20);
+        root.getChildren().add(threetbmin);
+        Button fourtbmin = buttonCipher(""+4,ncol*(sizeSquare+1)+borderh+310+4*interCipher,borderv +20);
+        root.getChildren().add(fourtbmin);
+        Button fivetbmin = buttonCipher(""+5,ncol*(sizeSquare+1)+borderh+310+5*interCipher,borderv +20);
+        root.getChildren().add(fivetbmin);
+        Button sixtbmin = buttonCipher(""+6,ncol*(sizeSquare+1)+borderh+310+6*interCipher,borderv +20);
+        root.getChildren().add(sixtbmin);
+        Button seventbmin = buttonCipher(""+7,ncol*(sizeSquare+1)+borderh+310+7*interCipher,borderv +20);
+        root.getChildren().add(seventbmin);
+        Button eighttbmin = buttonCipher(""+8,ncol*(sizeSquare+1)+borderh+310+8*interCipher,borderv +20);
+        root.getChildren().add(eighttbmin);
+
+
+
+
+
+
+        Button maxForBird = buttonBottom("Max number of neighbors to bird: "+tbirthmin,ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
+        root.getChildren().add(maxForBird);
+
+        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: "+tdeathLonelyness,ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
+        root.getChildren().add(minForDie);
+
+        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: "+tdeathOverpopulated,ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
+        root.getChildren().add(maxForDie);
+
 
         Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
         root.getChildren().add(backUp);
 
 
         scene.setOnMouseClicked(mouseGridClick -> {
-                    if (mouseGridClick.getSceneX() <= borderh + ncol * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
+                    if (!isrunning && mouseGridClick.getSceneX() <= borderh + ncol * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
                             && mouseGridClick.getSceneY() <= borderv + nrow * (sizeSquare + 1) && mouseGridClick.getSceneY() >= borderv) {
 
 
@@ -321,14 +368,16 @@ public class Main extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        // Animation
         AnimationTimer timer = new AnimationTimer() {
             long PrevTime =0;
             @Override
             public void handle(long now) {
                 long dt = now-PrevTime;
-                if(dt>2e9 && isrunning) {
+                if(dt>1e9 && isrunning) {
                     PrevTime = now;
-                    //System.out.println((now));
+                    //Update the grid after dt time while the action is running
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
                     ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
                     ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, tdeathLonelyness, tdeathOverpopulated));
