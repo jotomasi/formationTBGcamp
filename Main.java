@@ -29,6 +29,10 @@ public class Main extends Application {
     private int borderv = 10;
     private int borderh = 20;
     private boolean isrunning = false;
+    private int tbirthmin = 3;
+    private int tbirthmax = 3;
+    private int tdeathLonelyness = 1;
+    private int tdeathOverpopulated = 4;
 
     // TimeLine
     public static Timeline actualisation;
@@ -190,7 +194,7 @@ public class Main extends Application {
     }
 
 
-    private ArrayList<Integer[]> ListWillBorn(Grid grid, ArrayList<Integer[]> Lalive, int t) {
+    private ArrayList<Integer[]> ListWillBorn(Grid grid, ArrayList<Integer[]> Lalive, int tmin,int tmax) {
 
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         ArrayList<Integer[]> Ln;//list empty neighborhood
@@ -198,7 +202,7 @@ public class Main extends Application {
         for (Integer[] index : Lalive) {
             Ln = new ArrayList<>(selectEmptyNeighborIndex(grid, index[0], index[1]));
             for (Integer[] neighbor : Ln) {
-                if (neighborhoodAboveThresh(grid, neighbor[0], neighbor[1], t)) L.add(neighbor);
+                if (neighborhoodAboveThresh(grid, neighbor[0], neighbor[1], tmin)&&neighborhoodBellowThresh(grid, neighbor[0], neighbor[1], tmax)) L.add(neighbor);
             }
         }
         ;
@@ -264,8 +268,8 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
-                ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, 2));
-                ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, 0, 0));
+                ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
+                ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, tdeathLonelyness, tdeathOverpopulated));
                 updategrid(gc, grid, Lborn, Ldead);
             }
         });
@@ -323,8 +327,8 @@ public class Main extends Application {
                     PrevTime = now;
                     //System.out.println((now));
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
-                    ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, 2));
-                    ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, 0, 0));
+                    ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
+                    ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid, L, tdeathLonelyness, tdeathOverpopulated));
                     updategrid(gc, grid, Lborn, Ldead);
 
                 }
