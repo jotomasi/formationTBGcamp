@@ -66,8 +66,8 @@ public class Main extends Application {
         int r ;
         int g ;
         int b ;
-        int imod = i%grid.getnrow();
-        int jmod = j%grid.getncol();
+        int imod = Math.floorMod(i,grid.getnrow());
+        int jmod = Math.floorMod(j,grid.getncol());
         grid.getcell(i,j).setLive(!grid.getcell(imod,j).getLive());
         if(!grid.getcell(i,j).getLive()) {
             // gray no life here
@@ -89,8 +89,8 @@ public class Main extends Application {
         int r = 200 ;
         int g =120;
         int b =0;
-        int imod = i%grid.getnrow();
-        int jmod = j%grid.getncol();
+        int imod = Math.floorMod(i,grid.getnrow());
+        int jmod = Math.floorMod(j,grid.getncol());
         grid.getcell(i,j).setLive(true);
         gc.setFill(Color.rgb(r,g,b));
         gc.fillRect( borderh+jmod*(sizeSquare+1),  borderv+imod*(sizeSquare+1),  sizeSquare, sizeSquare);
@@ -101,8 +101,8 @@ public class Main extends Application {
         int r = 150 ;
         int g =150;
         int b =150;
-        int imod = i%grid.getnrow();
-        int jmod = j%grid.getncol();
+        int imod = Math.floorMod(i,grid.getnrow());
+        int jmod = Math.floorMod(j,grid.getncol());
         grid.getcell(i,j).setLive(false);
         gc.setFill(Color.rgb(r,g,b));
         gc.fillRect( borderh+jmod*(sizeSquare+1),  borderv+imod*(sizeSquare+1),  sizeSquare, sizeSquare);
@@ -229,21 +229,10 @@ public class Main extends Application {
 
         //init grid and draw it
         Grid grid = new Grid(nrow,ncol);
-        grid.getcell(5,10).setLive(true);
+        grid.getcell(0,10).setLive(true);
         grid.getcell(6,10).setLive(true);
-        ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
+
         paintGrid (gc,grid);
-        ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid,L,2));
-//        for(Integer[] lb : Lborn){
-//            System.out.println("lborn "+ lb[0]+" "+lb[1]);
-//        }
-       ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid,L,0,0));
-//        for(Integer[] ld : Ldead){
-//            System.out.println("ldead "+ ld[0]+" "+ld[1]);
-//        }
-        updategrid(gc,grid,Lborn,Ldead);
-       // updateCell(gc, grid, 5,10);
-        //updateCellByClick(gc, grid, 5,10);
 
         //create buttons
         int left = borderh +5 ;
@@ -257,6 +246,15 @@ public class Main extends Application {
 
         Button nextStep = buttonBottom("NextStep",left+stepwise,bottom);
         root.getChildren().add(nextStep);
+        nextStep.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
+                ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid,L,2));
+                ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(ListWillDead(grid,L,0,0));
+                updategrid(gc,grid,Lborn,Ldead);
+            }
+        });
 
         Button insertion = buttonBottom("Insertion",left+2*stepwise,bottom);
         root.getChildren().add(insertion);
@@ -292,14 +290,7 @@ public class Main extends Application {
         }
         );
 
-
-
-
-
-
-
-
-
+        System.out.println(Math.floorMod(-1,3));
         stage.setScene(scene);
         stage.show();
 
