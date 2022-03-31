@@ -15,10 +15,10 @@ import java.util.ArrayList;
 public class Main extends Application {
     //@Override
     private int ncol = 40;
-    private int nrow = 40;
+    private int nrow = 20;
     private int sizeSquare = 15;
-    private int borderh = 10;
-    private int borderv = 20;
+    private int borderv = 10;
+    private int borderh = 20;
 
 
     // buttons functions
@@ -58,7 +58,7 @@ public class Main extends Application {
                     b = 0;
                 }
                 gc.setFill(Color.rgb(r,g,b));
-                gc.fillRect( borderh+i*(sizeSquare+1),  borderv+j*(sizeSquare+1),  sizeSquare, sizeSquare);
+                gc.fillRect( borderh+j*(sizeSquare+1),  borderv+i*(sizeSquare+1),  sizeSquare, sizeSquare);
             }
         }
     }
@@ -82,7 +82,7 @@ public class Main extends Application {
             b = 0;
         }
         gc.setFill(Color.rgb(r,g,b));
-        gc.fillRect( borderh+imod*(sizeSquare+1),  borderv+jmod*(sizeSquare+1),  sizeSquare, sizeSquare);
+        gc.fillRect( borderh+jmod*(sizeSquare+1),  borderv+imod*(sizeSquare+1),  sizeSquare, sizeSquare);
 
     }
 
@@ -95,7 +95,7 @@ public class Main extends Application {
                 grid.getcell(i,j).setLive(false);
                 grid.getcell(i,j).setLifeTime(false);
                 gc.setFill(Color.rgb(r,g,b));
-                gc.fillRect( borderh+i*(sizeSquare+1),  borderv+j*(sizeSquare+1),  sizeSquare, sizeSquare);
+                gc.fillRect( borderh+j*(sizeSquare+1),  borderv+i*(sizeSquare+1),  sizeSquare, sizeSquare);
             }
         }
     }
@@ -149,7 +149,6 @@ public class Main extends Application {
         }
         return Ln;
     }
-
 
 
     private ArrayList<Integer[]> ListWillBorn(Grid grid, ArrayList<Integer[]> Lalive, int t){
@@ -246,16 +245,16 @@ public class Main extends Application {
 
 /** click mouse*/
         scene.setOnMouseClicked(mouseGridClick -> {
-            if (mouseGridClick.getSceneX() <= borderh + nrow * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
-                    && mouseGridClick.getSceneY() <= borderv + ncol * (sizeSquare + 1) && mouseGridClick.getSceneY() >= borderv) {
+            if (mouseGridClick.getSceneX() <= borderh + ncol * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
+                    && mouseGridClick.getSceneY() <= borderv + nrow * (sizeSquare + 1) && mouseGridClick.getSceneY() >= borderv) {
 
 
                 double coordx = mouseGridClick.getSceneX();
                 double coordy = mouseGridClick.getSceneY();
-                int icoordx = (int) (coordx - borderh - coordx % 1) / (sizeSquare + 1);
-                int icoordy = (int) (coordy - borderv - coordy % 1) / (sizeSquare + 1);
-                System.out.println(icoordx + "  " + icoordy);
-                updateCell(gc, grid, icoordx, icoordy);
+                int idcol= (int) (coordx - borderh - coordx % 1) / (sizeSquare + 1);
+                int idrow = (int) (coordy - borderv - coordy % 1) / (sizeSquare + 1);
+                System.out.println(idrow + "  " + idcol);
+                updateCell(gc, grid, idrow, idcol);
             }
         }
         );
