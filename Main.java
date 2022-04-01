@@ -320,7 +320,7 @@ public class Main extends Application {
 //
 //        });
 
-        int interCipher = 30;
+        int interCipher = 310;
         //ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
         int[] oneToEigthN = new int[] {0,1,2,3,4,5,6,7,8};
 
@@ -331,15 +331,13 @@ public class Main extends Application {
         root.getChildren().add(minForBirdcb);
         for (int i:oneToEigthN) { minForBirdcb.getItems().add(i); };
         minForBirdcb.getSelectionModel().select(tbirthmin);
-        minForBirdcb.setTranslateX(50);
-        minForBirdcb.setTranslateX(100);
+        minForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        minForBirdcb.setTranslateY(borderv +20);
         minForBirdcb.setOnAction(e->{
             if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
                 minForBirdcb.getSelectionModel().select(tbirthmin);
             }
             else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
-
-
         });
 
 
@@ -347,14 +345,51 @@ public class Main extends Application {
 
 
 
-        Button maxForBird = buttonBottom("Max number of neighbors to bird: "+tbirthmin,ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
+        Button maxForBird = buttonBottom("Max number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
         root.getChildren().add(maxForBird);
+        ComboBox<Integer> maxForBirdcb = new ComboBox<Integer>();
+        root.getChildren().add(maxForBirdcb);
+        for (int i:oneToEigthN) { maxForBirdcb.getItems().add(i); };
+        maxForBirdcb.getSelectionModel().select(tbirthmax);
+        maxForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        maxForBirdcb.setTranslateY(borderv+stepwisev +20);
+        maxForBirdcb.setOnAction(e->{
+            if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
+                maxForBirdcb.getSelectionModel().select(tbirthmax);
+            }
+            else tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
+        });
 
-        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: "+tdeathLonelyness,ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
+        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: ",ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
         root.getChildren().add(minForDie);
+        ComboBox<Integer> minForDiecb = new ComboBox<Integer>();
+        root.getChildren().add(minForDiecb);
+        for (int i:oneToEigthN) { minForDiecb.getItems().add(i); };
+        minForDiecb.getSelectionModel().select(tdeathLonelyness);
+        minForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        minForDiecb.setTranslateY(borderv+2*stepwisev +20);
+        minForDiecb.setOnAction(e->{
+            if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
+                minForDiecb.getSelectionModel().select(tdeathLonelyness);
+            }
+            else tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
+        });
 
-        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: "+tdeathOverpopulated,ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
+        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: ",ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
         root.getChildren().add(maxForDie);
+        ComboBox<Integer> maxForDiecb = new ComboBox<Integer>();
+        root.getChildren().add(maxForDiecb);
+        for (int i:oneToEigthN) { maxForDiecb.getItems().add(i); };
+        maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
+        maxForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        maxForDiecb.setTranslateY(borderv +20+3*stepwisev);
+        maxForDiecb.setOnAction(e->{
+
+            if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
+                maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
+            }
+            else tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
+        });
 
 
         Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
