@@ -1,13 +1,20 @@
 import Project.Grid;
 import javafx.animation.AnimationTimer;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.application.Application;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
@@ -27,7 +34,7 @@ public class Main extends Application {
     private int tdeathLonelyness = 1;
     private int tdeathOverpopulated = 4;
 
-
+//
 
     // button creation function
     private Button buttonBottom(String strings, int left, int bottom) {
@@ -259,6 +266,8 @@ public class Main extends Application {
         int stepwisev = 40;
 
         stage.setTitle("Game Life on the Grid");
+
+        //startStop button
         Button startStop = buttonBottom("Start", left, bottom);
         root.getChildren().add(startStop);
         startStop.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -270,6 +279,8 @@ public class Main extends Application {
             }
         });
 
+
+        //nextStep button
         Button nextStep = buttonBottom("NextStep", left + stepwise, bottom);
         root.getChildren().add(nextStep);
         nextStep.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -285,9 +296,11 @@ public class Main extends Application {
             }
         });
 
+        //insertion button
         Button insertion = buttonBottom("Insertion", left + 2 * stepwise, bottom);
         root.getChildren().add(insertion);
 
+        //reset button
         Button reset = buttonBottom("Reset", left + 3 * stepwise, bottom);
         reset.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -306,27 +319,28 @@ public class Main extends Application {
 //        rules.setOnAction(e->{
 //
 //        });
+
         int interCipher = 30;
-        Button minForBird = buttonBottom("Min number of neighbors to bird: "+tbirthmin,ncol*(sizeSquare+1)+borderh +10,borderv +20);
+        //ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
+        int[] oneToEigthN = new int[] {0,1,2,3,4,5,6,7,8};
+
+
+        Button minForBird = buttonBottom("Min number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv +20);
         root.getChildren().add(minForBird);
-        Button zerotbmin = buttonCipher(""+0,ncol*(sizeSquare+1)+borderh+310,borderv +20);
-        root.getChildren().add(zerotbmin);
-        Button onetbmin = buttonCipher(""+1,ncol*(sizeSquare+1)+borderh+310+interCipher,borderv +20);
-        root.getChildren().add(onetbmin);
-        Button twotbmin = buttonCipher(""+2,ncol*(sizeSquare+1)+borderh+310+2*interCipher,borderv +20);
-        root.getChildren().add(twotbmin);
-        Button threetbmin = buttonCipher(""+3,ncol*(sizeSquare+1)+borderh+310+3*interCipher,borderv +20);
-        root.getChildren().add(threetbmin);
-        Button fourtbmin = buttonCipher(""+4,ncol*(sizeSquare+1)+borderh+310+4*interCipher,borderv +20);
-        root.getChildren().add(fourtbmin);
-        Button fivetbmin = buttonCipher(""+5,ncol*(sizeSquare+1)+borderh+310+5*interCipher,borderv +20);
-        root.getChildren().add(fivetbmin);
-        Button sixtbmin = buttonCipher(""+6,ncol*(sizeSquare+1)+borderh+310+6*interCipher,borderv +20);
-        root.getChildren().add(sixtbmin);
-        Button seventbmin = buttonCipher(""+7,ncol*(sizeSquare+1)+borderh+310+7*interCipher,borderv +20);
-        root.getChildren().add(seventbmin);
-        Button eighttbmin = buttonCipher(""+8,ncol*(sizeSquare+1)+borderh+310+8*interCipher,borderv +20);
-        root.getChildren().add(eighttbmin);
+        ComboBox<Integer> minForBirdcb = new ComboBox<Integer>();
+        root.getChildren().add(minForBirdcb);
+        for (int i:oneToEigthN) { minForBirdcb.getItems().add(i); };
+        minForBirdcb.getSelectionModel().select(tbirthmin);
+        minForBirdcb.setTranslateX(50);
+        minForBirdcb.setTranslateX(100);
+        minForBirdcb.setOnAction(e->{
+            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
+                minForBirdcb.getSelectionModel().select(tbirthmin);
+            }
+            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
+
+
+        });
 
 
 
@@ -377,6 +391,7 @@ public class Main extends Application {
                 long dt = now-PrevTime;
                 if(dt>1e9 && isrunning) {
                     PrevTime = now;
+                    System.out.println("hi");
                     //Update the grid after dt time while the action is running
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
                     ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
