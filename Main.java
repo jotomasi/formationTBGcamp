@@ -29,6 +29,7 @@ public class Main extends Application {
     private int borderv = 10;
     private int borderh = 20;
     private boolean isrunning = false;
+    private boolean canmodifrule = false;
     private int tbirthmin = 3;
     private int tbirthmax = 3;
     private int tdeathLonelyness = 1;
@@ -243,6 +244,10 @@ public class Main extends Application {
     }
 
 
+
+
+
+
     public void start(Stage stage) throws Exception {
         Group root = new Group();
         Scene scene = new Scene(root, ncol * sizeSquare + 700, nrow * sizeSquare + 150);
@@ -253,8 +258,8 @@ public class Main extends Application {
 
         //init grid and draw it
         Grid grid = new Grid(nrow, ncol);
-        grid.getcell(0, 10).setLive(true);
-        grid.getcell(6, 10).setLive(true);
+        //grid.getcell(0, 10).setLive(true);
+        //grid.getcell(6, 10).setLive(true);
         paintGrid(gc, grid);
 
 
@@ -267,6 +272,101 @@ public class Main extends Application {
 
         stage.setTitle("Game Life on the Grid");
 
+        int interCipher = 310;
+        int[] oneToEigthN = new int[] {0,1,2,3,4,5,6,7,8};
+        //ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
+
+        Button minForBird = buttonBottom("Min number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv +20);
+        root.getChildren().add(minForBird);
+        ComboBox<Integer> minForBirdcb = new ComboBox<Integer>();
+        root.getChildren().add(minForBirdcb);
+        for (int i = 0;  i<=tbirthmax;i++) { minForBirdcb.getItems().add(i); }
+        minForBirdcb.getSelectionModel().select(tbirthmin);
+        minForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        minForBirdcb.setTranslateY(borderv +20);
+        minForBirdcb.setDisable(true);
+        //set
+//        minForBirdcb.setOnAction(e->{
+//            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
+//                minForBirdcb.getSelectionModel().select(tbirthmin);
+//
+//            }
+//            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
+//        });
+//        minForBirdcb.setOnAction(e->{
+//            tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
+//            maxForBirdcb.setItems();
+//            for (int i = tbirthmin;  i<=8;i++) {maxForBirdcb.setItems().add(i); }
+//
+//        });
+
+
+
+
+
+        Button maxForBird = buttonBottom("Max number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
+        root.getChildren().add(maxForBird);
+        ComboBox<Integer> maxForBirdcb = new ComboBox<Integer>();
+        root.getChildren().add(maxForBirdcb);
+        for (int i = tbirthmin;  i<=8;i++) {maxForBirdcb.getItems().add(i); }
+        //for (int i:oneToEigthN) { maxForBirdcb.getItems().add(i); };
+        maxForBirdcb.getSelectionModel().select(tbirthmax);
+        maxForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        maxForBirdcb.setTranslateY(borderv+stepwisev +20);
+        maxForBirdcb.setDisable(true);
+        maxForBirdcb.setOnAction(e->{
+            if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
+                maxForBirdcb.getSelectionModel().select(tbirthmax);
+            }
+            else tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
+        });
+
+        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: ",ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
+        root.getChildren().add(minForDie);
+        ComboBox<Integer> minForDiecb = new ComboBox<Integer>();
+        root.getChildren().add(minForDiecb);
+        for (int i = 0;  i<=tdeathOverpopulated;i++) { minForDiecb.getItems().add(i); }
+        //for (int i:oneToEigthN) { minForDiecb.getItems().add(i); };
+        minForDiecb.getSelectionModel().select(tdeathLonelyness);
+        minForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        minForDiecb.setTranslateY(borderv+2*stepwisev +20);
+        minForDiecb.setDisable(true);
+        minForDiecb.setOnAction(e->{
+            if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
+                minForDiecb.getSelectionModel().select(tdeathLonelyness);
+            }
+            else tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
+        });
+
+        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: ",ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
+        root.getChildren().add(maxForDie);
+        ComboBox<Integer> maxForDiecb = new ComboBox<Integer>();
+        root.getChildren().add(maxForDiecb);
+        for (int i = tbirthmin;  i<=8;i++) {maxForDiecb.getItems().add(i);}
+        //for (int i:oneToEigthN) { maxForDiecb.getItems().add(i); };
+        maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
+        maxForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
+        maxForDiecb.setTranslateY(borderv +20+3*stepwisev);
+        maxForDiecb.setDisable(true);
+        maxForDiecb.setOnAction(e->{
+
+            if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
+                maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
+            }
+            else tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
+        });
+
+
+
+
+
+
+
+
+
+
+
+
         //startStop button
         Button startStop = buttonBottom("Start", left, bottom);
         root.getChildren().add(startStop);
@@ -274,8 +374,20 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 isrunning = !isrunning;
-                if(isrunning) startStop.setText("Stop");
-                else startStop.setText("Start");
+                if(isrunning) {
+                    startStop.setText("Stop");
+                    canmodifrule = false;
+                    maxForBirdcb.setDisable(true);
+                    maxForDiecb.setDisable(true);
+                    minForDiecb.setDisable(true);
+                    minForBirdcb.setDisable(true);
+
+
+                }
+                else {
+                    startStop.setText("Start");
+                    canmodifrule = false;
+                };
             }
         });
 
@@ -316,80 +428,23 @@ public class Main extends Application {
 
         Button rules = buttonBottom("Rules", left + 4 * stepwise, bottom);
         root.getChildren().add(rules);
-//        rules.setOnAction(e->{
-//
-//        });
-
-        int interCipher = 310;
-        //ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
-        int[] oneToEigthN = new int[] {0,1,2,3,4,5,6,7,8};
-
-
-        Button minForBird = buttonBottom("Min number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv +20);
-        root.getChildren().add(minForBird);
-        ComboBox<Integer> minForBirdcb = new ComboBox<Integer>();
-        root.getChildren().add(minForBirdcb);
-        for (int i:oneToEigthN) { minForBirdcb.getItems().add(i); };
-        minForBirdcb.getSelectionModel().select(tbirthmin);
-        minForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        minForBirdcb.setTranslateY(borderv +20);
-        minForBirdcb.setOnAction(e->{
-            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
-                minForBirdcb.getSelectionModel().select(tbirthmin);
+        rules.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if(!isrunning) {
+                    canmodifrule = !canmodifrule;
+                    maxForBirdcb.setDisable(!canmodifrule);
+                    minForBirdcb.setDisable(!canmodifrule);
+                    maxForDiecb.setDisable(!canmodifrule);
+                    minForDiecb.setDisable(!canmodifrule);
+                    //System.out.println(canmodifrule);
+                }
             }
-            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
         });
 
 
 
 
-
-
-        Button maxForBird = buttonBottom("Max number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
-        root.getChildren().add(maxForBird);
-        ComboBox<Integer> maxForBirdcb = new ComboBox<Integer>();
-        root.getChildren().add(maxForBirdcb);
-        for (int i:oneToEigthN) { maxForBirdcb.getItems().add(i); };
-        maxForBirdcb.getSelectionModel().select(tbirthmax);
-        maxForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        maxForBirdcb.setTranslateY(borderv+stepwisev +20);
-        maxForBirdcb.setOnAction(e->{
-            if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
-                maxForBirdcb.getSelectionModel().select(tbirthmax);
-            }
-            else tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
-        });
-
-        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: ",ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
-        root.getChildren().add(minForDie);
-        ComboBox<Integer> minForDiecb = new ComboBox<Integer>();
-        root.getChildren().add(minForDiecb);
-        for (int i:oneToEigthN) { minForDiecb.getItems().add(i); };
-        minForDiecb.getSelectionModel().select(tdeathLonelyness);
-        minForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        minForDiecb.setTranslateY(borderv+2*stepwisev +20);
-        minForDiecb.setOnAction(e->{
-            if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
-                minForDiecb.getSelectionModel().select(tdeathLonelyness);
-            }
-            else tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
-        });
-
-        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: ",ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
-        root.getChildren().add(maxForDie);
-        ComboBox<Integer> maxForDiecb = new ComboBox<Integer>();
-        root.getChildren().add(maxForDiecb);
-        for (int i:oneToEigthN) { maxForDiecb.getItems().add(i); };
-        maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
-        maxForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        maxForDiecb.setTranslateY(borderv +20+3*stepwisev);
-        maxForDiecb.setOnAction(e->{
-
-            if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
-                maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
-            }
-            else tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
-        });
 
 
         Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
@@ -405,7 +460,7 @@ public class Main extends Application {
                         double coordy = mouseGridClick.getSceneY();
                         int idcol = (int) (coordx - borderh - coordx % 1) / (sizeSquare + 1);
                         int idrow = (int) (coordy - borderv - coordy % 1) / (sizeSquare + 1);
-                        System.out.println(idrow + "  " + idcol);
+                        //System.out.println(idrow + "  " + idcol);
                         updateCell(gc, grid, idrow, idcol);
                     }
                 }
@@ -426,7 +481,7 @@ public class Main extends Application {
                 long dt = now-PrevTime;
                 if(dt>1e9 && isrunning) {
                     PrevTime = now;
-                    System.out.println("hi");
+                    //System.out.println("hi");
                     //Update the grid after dt time while the action is running
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(selectAliveCellIndex(grid));
                     ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(ListWillBorn(grid, L, tbirthmin,tbirthmax));
