@@ -97,6 +97,7 @@ public class Main extends Application {
         int interCipher = 210;// gap between the button and comboboxes at the rigth of the grid
         int addh= 400;// add a horizontal gap for button
         int addv = 100;// add a vertical gap for button
+        long timegap = (long) 0.5e9;// gap of time between 2 animations while running (started)
 
         //init graphical resources
         Group root = new Group();
@@ -292,7 +293,7 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 long dt = now-PrevTime;
-                if(dt>1e9 && isrunning) {
+                if(dt>timegap && isrunning) {
                     PrevTime = now;
                     // modify the grid every dt (1second) during the running and don't allow ot if not started
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(grid.selectAliveCellIndex());
