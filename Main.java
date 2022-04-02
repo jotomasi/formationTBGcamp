@@ -95,34 +95,36 @@ public class Main extends Application {
         int left = borderh + 5;// gap between the left of the scene and the first button bellow the grid
         int bottom = Math.max(nrow * (sizeSquare + 1) ,6*stepwisev)+ borderv + 10;// y positon of the buttons bellow the grid
         int interCipher = 210;// gap between the button and comboboxes at the rigth of the grid
+        int addh= 400;// add a horizontal gap for button
+        int addv = 100;// add a vertical gap for button
 
         //init graphical resources
-        int addh= 400;
-        int addv = 100;
         Group root = new Group();
-        Scene scene = new Scene(root, Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh, Math.max(nrow * sizeSquare, 6*stepwisev )+ addv);
-        Canvas canvas = new Canvas(Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh, Math.max(nrow * sizeSquare, 6*stepwisev ) + addv);
+        Scene scene = new Scene(root, Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh,
+                Math.max(nrow * sizeSquare, 6*stepwisev )+ addv);
+        Canvas canvas = new Canvas(Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh,
+                Math.max(nrow * sizeSquare, 6*stepwisev ) + addv);
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        // background color and title
         gc.setFill(Color.rgb(250,250,220));
         gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stage.setTitle("Game Life on the Grid");
 
-        //init grid and draw it
+        //init grid , graphical object and draw it
         Grid grid = new Grid(nrow, ncol);
         Graph gr  = new Graph(gc, ncol, nrow, sizeSquare, borderv,borderh);
         gr.paintGrid(grid);
 
-
-
-        //create buttons and comboboxes
+        //create buttons and comboboxes at the right of the grid (threshold buttons)
 
         Button minForBird = buttonBottom("Min number of neighbors to bird: ",
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,borderv +20);
         root.getChildren().add(minForBird);
         ComboBox<Integer> minForBirdcb = genCb(root,0,8,tbirthmin,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+interCipher,borderv +20);
-        minForBirdcb.setOnAction(e->{
+        minForBirdcb.setOnAction(e->{ //don't allow forbidden values
             if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
                 minForBirdcb.getSelectionModel().select(tbirthmin);
             }
@@ -137,7 +139,7 @@ public class Main extends Application {
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+ interCipher,borderv + 2*stepwisev +20);
 
         maxForBirdcb.setDisable(true);
-        maxForBirdcb.setOnAction(e->{
+        maxForBirdcb.setOnAction(e->{//don't allow forbidden values
             if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
                 maxForBirdcb.getSelectionModel().select(tbirthmax);
             }
@@ -151,7 +153,7 @@ public class Main extends Application {
         ComboBox<Integer> minForDiecb = genCb(root,0,8,tdeathLonelyness,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 + interCipher,borderv+4*stepwisev+20);
 
-        minForDiecb.setOnAction(e->{
+        minForDiecb.setOnAction(e->{//don't allow forbidden values
             if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
                 minForDiecb.getSelectionModel().select(tdeathLonelyness);
             }
@@ -165,7 +167,7 @@ public class Main extends Application {
         root.getChildren().add(maxForDie);
         ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 +interCipher,borderv +20+6*stepwisev    );
-        maxForDiecb.setOnAction(e->{
+        maxForDiecb.setOnAction(e->{//don't allow forbidden values
 
             if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
                 maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
@@ -174,14 +176,19 @@ public class Main extends Application {
         }
         );
 
+
+        // create button below the grids
+
         //startStop button
         Button startStop = buttonBottom("Start", left, bottom);
         root.getChildren().add(startStop);
         startStop.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                //catch click  event on the button
                 isrunning = !isrunning;
                 if(isrunning) {
+                    //modify button label and don't allow modifying combobxes
                     startStop.setText("Stop");
                     canmodifrule = false;
                     maxForBirdcb.setDisable(true);
@@ -192,6 +199,7 @@ public class Main extends Application {
 
                 }
                 else {
+                    // modify the label button and don't allow modifying rules
                     startStop.setText("Start");
                     canmodifrule = false;
                 };
@@ -204,8 +212,8 @@ public class Main extends Application {
         nextStep.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-
                 if(!isrunning) {
+                    //modify when we click on the button if not running(started)
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(grid.selectAliveCellIndex());
                     ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(grid.ListWillBorn( L, tbirthmin, tbirthmax));
                     ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(grid.ListWillDead( L, tdeathLonelyness, tdeathOverpopulated));
@@ -223,8 +231,10 @@ public class Main extends Application {
         reset.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                //reset cells values from the grid
                 gr.resetCellByClick(grid);
                 if(isrunning) {
+                    //catch click and modify the button label of the startstop button
                     isrunning = !isrunning;
                     startStop.setText("Start");
                 }
@@ -238,6 +248,7 @@ public class Main extends Application {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if(!isrunning) {
+                    //allow (or not) to modify combo boxes
                     canmodifrule = !canmodifrule;
                     maxForBirdcb.setDisable(!canmodifrule);
                     minForBirdcb.setDisable(!canmodifrule);
@@ -254,15 +265,19 @@ public class Main extends Application {
 
 
         scene.setOnMouseClicked(mouseGridClick -> {
+
+                    // positions of the grid
                     if (!isrunning && mouseGridClick.getSceneX() <= borderh + ncol * (sizeSquare + 1) && mouseGridClick.getSceneX() >= borderh
                             && mouseGridClick.getSceneY() <= borderv + nrow * (sizeSquare + 1) && mouseGridClick.getSceneY() >= borderv) {
 
-
+                        //convert position on the grid to indexes
                         double coordx = mouseGridClick.getSceneX();
                         double coordy = mouseGridClick.getSceneY();
                         int idcol = (int) (coordx - borderh - coordx % 1) / (sizeSquare + 1);
                         int idrow = (int) (coordy - borderv - coordy % 1) / (sizeSquare + 1);
                         //System.out.println(idrow + "  " + idcol);
+
+                        // modifying the cells of the grid if not started or stopped
                         gr.updateCell( grid, idrow, idcol);
                     }
                 }
@@ -281,8 +296,7 @@ public class Main extends Application {
                 long dt = now-PrevTime;
                 if(dt>1e9 && isrunning) {
                     PrevTime = now;
-                    //System.out.println("hi");
-                    //Update the grid after dt time while the action is running
+                    // modify the grid every dt (1second) during the running and don't allow ot if not started
                     ArrayList<Integer[]> L = new ArrayList<Integer[]>(grid.selectAliveCellIndex());
                     ArrayList<Integer[]> Lborn = new ArrayList<Integer[]>(grid.ListWillBorn( L, tbirthmin,tbirthmax));
                     ArrayList<Integer[]> Ldead = new ArrayList<Integer[]>(grid.ListWillDead( L, tdeathLonelyness, tdeathOverpopulated));
