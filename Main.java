@@ -246,6 +246,22 @@ public class Main extends Application {
 
 
 
+    private ComboBox<Integer> genCb(Group root,int inf, int sup,int thresh,int x, int y) {
+
+        ComboBox<Integer> cb= new ComboBox<Integer>();
+        root.getChildren().add(cb);
+        for (int i = inf;  i<=sup;i++) { cb.getItems().add(i); }
+        cb.getSelectionModel().select(thresh);
+        cb.setTranslateX(x);
+        cb.setTranslateY( y);
+        cb.setDisable(!canmodifrule);
+        return cb;
+    };
+
+
+
+
+
 
 
     public void start(Stage stage) throws Exception {
@@ -276,43 +292,29 @@ public class Main extends Application {
         int[] oneToEigthN = new int[] {0,1,2,3,4,5,6,7,8};
         //ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
 
-        Button minForBird = buttonBottom("Min number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv +20);
+        
+//ObservableList<Integer> oneToEigthN = FXCollections.observableArrayList(0,1,2,3,4,5,6,7,8);
+
+        Button minForBird = buttonBottom("Min number of neighbors to bird: ",
+                ncol*(sizeSquare+1)+ borderh +10,borderv +20);
         root.getChildren().add(minForBird);
-        ComboBox<Integer> minForBirdcb = new ComboBox<Integer>();
-        root.getChildren().add(minForBirdcb);
-        for (int i = 0;  i<=tbirthmax;i++) { minForBirdcb.getItems().add(i); }
-        minForBirdcb.getSelectionModel().select(tbirthmin);
-        minForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        minForBirdcb.setTranslateY(borderv +20);
-        minForBirdcb.setDisable(true);
-        //set
-//        minForBirdcb.setOnAction(e->{
-//            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
-//                minForBirdcb.getSelectionModel().select(tbirthmin);
-//
-//            }
-//            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
-//        });
-//        minForBirdcb.setOnAction(e->{
-//            tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
-//            maxForBirdcb.setItems();
-//            for (int i = tbirthmin;  i<=8;i++) {maxForBirdcb.setItems().add(i); }
-//
-//        });
+        ComboBox<Integer> minForBirdcb = genCb(root,0,8,tbirthmin,
+                ncol*(sizeSquare+1)+ borderh +10+interCipher,borderv +20);
+//set
+        minForBirdcb.setOnAction(e->{
+            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
+                minForBirdcb.getSelectionModel().select(tbirthmin);
 
+            }
+            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
+        });
 
-
-
-
-        Button maxForBird = buttonBottom("Max number of neighbors to bird: ",ncol*(sizeSquare+1)+borderh +10,borderv+stepwisev +20);
+        Button maxForBird = buttonBottom("Max number of neighbors to bird: ",
+                ncol*(sizeSquare+1)+ borderh +10,borderv+stepwisev +20);
         root.getChildren().add(maxForBird);
-        ComboBox<Integer> maxForBirdcb = new ComboBox<Integer>();
-        root.getChildren().add(maxForBirdcb);
-        for (int i = tbirthmin;  i<=8;i++) {maxForBirdcb.getItems().add(i); }
-        //for (int i:oneToEigthN) { maxForBirdcb.getItems().add(i); };
-        maxForBirdcb.getSelectionModel().select(tbirthmax);
-        maxForBirdcb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        maxForBirdcb.setTranslateY(borderv+stepwisev +20);
+        ComboBox<Integer> maxForBirdcb = genCb(root,0,8,tbirthmax,
+                ncol *( sizeSquare +1)+ borderh +10+ interCipher,borderv + stepwisev +20);
+
         maxForBirdcb.setDisable(true);
         maxForBirdcb.setOnAction(e->{
             if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
@@ -321,16 +323,12 @@ public class Main extends Application {
             else tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
         });
 
-        Button minForDie = buttonBottom("Max number of neighbors to die of loneliness: ",ncol*(sizeSquare+1)+borderh +10,borderv+2*stepwisev+20);
+        Button minForDie = buttonBottom("Threshold  of loneliness: ",
+                ncol*(sizeSquare+1)+ borderh +10,borderv +2* stepwisev +20);
         root.getChildren().add(minForDie);
-        ComboBox<Integer> minForDiecb = new ComboBox<Integer>();
-        root.getChildren().add(minForDiecb);
-        for (int i = 0;  i<=tdeathOverpopulated;i++) { minForDiecb.getItems().add(i); }
-        //for (int i:oneToEigthN) { minForDiecb.getItems().add(i); };
-        minForDiecb.getSelectionModel().select(tdeathLonelyness);
-        minForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        minForDiecb.setTranslateY(borderv+2*stepwisev +20);
-        minForDiecb.setDisable(true);
+        ComboBox<Integer> minForDiecb = genCb(root,0,8,tdeathLonelyness,
+                grid.getncol() * ( sizeSquare +1)+ borderh + 10 + interCipher,borderv+2*stepwisev+20);
+
         minForDiecb.setOnAction(e->{
             if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
                 minForDiecb.getSelectionModel().select(tdeathLonelyness);
@@ -338,16 +336,11 @@ public class Main extends Application {
             else tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
         });
 
-        Button maxForDie = buttonBottom("Min number of neighbors to die of overpopulation: ",ncol*(sizeSquare+1)+borderh +10,borderv+3*stepwisev+20);
+        Button maxForDie = buttonBottom("Threshold of overpopulation: ",
+                ncol*(sizeSquare+1)+ borderh +10,borderv+3*stepwisev+20);
         root.getChildren().add(maxForDie);
-        ComboBox<Integer> maxForDiecb = new ComboBox<Integer>();
-        root.getChildren().add(maxForDiecb);
-        for (int i = tbirthmin;  i<=8;i++) {maxForDiecb.getItems().add(i);}
-        //for (int i:oneToEigthN) { maxForDiecb.getItems().add(i); };
-        maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
-        maxForDiecb.setTranslateX(ncol*(sizeSquare+1)+borderh +10+interCipher);
-        maxForDiecb.setTranslateY(borderv +20+3*stepwisev);
-        maxForDiecb.setDisable(true);
+        ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
+                grid.getncol()*( sizeSquare+1)+ borderh +10+interCipher,borderv +20+3*stepwisev    );
         maxForDiecb.setOnAction(e->{
 
             if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
@@ -355,13 +348,6 @@ public class Main extends Application {
             }
             else tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
         });
-
-
-
-
-
-
-
 
 
 
