@@ -17,53 +17,84 @@ import java.util.ArrayList;
 
 
 public class Main extends Application {
-    private int ncol = 40;
-    private int nrow = 20;
-    private int sizeSquare = 15;
-    private int borderv = 10;
-    private int borderh = 20;
-    private boolean isrunning = false;
-    private boolean canmodifrule = false;
-    private int tbirthmin = 3;
-    private int tbirthmax = 3;
-    private int tdeathLonelyness = 1;
-    private int tdeathOverpopulated = 4;
+
+    private int ncol = 40;//number of columns of the grid
+    private int nrow = 20;//number of row of the grid
+    private int sizeSquare = 15;// square size of the cell from the grid
+    private int borderv = 10; // vertical gap between the top of the scene and the grid
+    private int borderh = 20;// horizontal gap between the left border of the scene and the grid
+    private boolean isrunning = false;// value catching click on start  and reset buttons
+    private boolean canmodifrule = false;// value catching click on rules button while not running
+    private int tbirthmin = 3;// minimal (<= nb neighbor) number of alive neighbors to birth at a certain position
+    private int tbirthmax = 3;// maximal (>= nb neighbor) number of alive neighbors to birth at a certain position
+    private int tdeathLonelyness = 1;// minimal (<= nb neighbor) number of alive neighbors to die of lonelyness at a certain position
+    private int tdeathOverpopulated = 4;// maximal (>= nb neighbor) number of alive neighbors to die of over population at a certain position
 
     // button creation function
     private Button buttonBottom(String strings, int left, int bottom) {
+        /**
+         * Create a predefine styled button at the position (x,y) = (left,botom)
+         * @param strings  button text,name
+         * @param left X position on the scene
+         * @param bottom Y position on the scene
+         * @return button the desirated button
+         */
+
+        //create button
         Button button = new Button(strings);
 
+        //set his layaout, width and height
         button.setLayoutX(left);
         button.setLayoutY(bottom);
         button.setMinWidth(80);
         button.setMinHeight(30);
 
+        //set his color
         button.setStyle("-fx-border-color: white;");
         button.setStyle("-fx-background-color: rgb(180,180,180)");
+
         return button;
     }
 
     private ComboBox<Integer> genCb(Group root,int inf, int sup,int thresh,int x, int y) {
+        /**
+         * Create a Combobox for choosing the threshold value for the death and birth situation
+         * @param root the group for the graphical set up
+         * @param inf the minimal value could be selected
+         * @param sup the maximal value could be selected
+         * @param thresh the preselected threshold value
+         * @param x x position on the scene
+         * @param y y position on the scene
+         * @return cb the desirated comboBox
+         */
+
+        // create the comboBox of Integers
         ComboBox<Integer> cb= new ComboBox<Integer>();
         root.getChildren().add(cb);
-        for (int i = inf;  i<=sup;i++) { cb.getItems().add(i); }
-        cb.getSelectionModel().select(thresh);
+        for (int i = inf;  i<=sup;i++)  cb.getItems().add(i);
+
+        //set the position
         cb.setTranslateX(x);
         cb.setTranslateY( y);
+
+        //preselect the value
+        cb.getSelectionModel().select(thresh);
+
+        // allow to choose or not  a value if we can do it
+        // i.e. if not running, and if  after a Stop or before Start we clicked on Rules button before
         cb.setDisable(!canmodifrule);
+
         return cb;
     };
 
     public void start(Stage stage) throws Exception {
-        //Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
-//        ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
-//                grid.getncol()*( sizeSquare+1)+ borderh +10+interCipher,borderv +20+6*stepwisev    );
-        //left + 5 * stepwise
-        int stepwise = 100;
-        int stepwisev = 30 ;
-        int left = borderh + 5;
-        int bottom = Math.max(nrow * (sizeSquare + 1) ,6*stepwisev)+ borderv + 10;
-        int interCipher = 210;
+
+
+        int stepwise = 100;// a value to create a gap between the button bellow the grid
+        int stepwisev = 30 ;// a value to create a vertical gap between the button at the right of the grid
+        int left = borderh + 5;// gap between the left of the scene and the first button bellow the grid
+        int bottom = Math.max(nrow * (sizeSquare + 1) ,6*stepwisev)+ borderv + 10;// y positon of the buttons bellow the grid
+        int interCipher = 210;// gap between the button and comboboxes at the rigth of the grid
 
         //init graphical resources
         int addh= 400;
