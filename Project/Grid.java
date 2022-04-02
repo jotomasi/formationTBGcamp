@@ -8,6 +8,8 @@ public class Grid {
     private int ncol = 1; // nombre de colonnes
     private int nrow = 1; // nombre de ligne
     private Cell[][] grid;
+
+
     //Constructors
     public Grid(int l,int c){
         //set cols and rows
@@ -32,6 +34,13 @@ public class Grid {
     //Rules function and usefull fonction for Rules
 
     private boolean neighborhoodAboveThresh( int i, int j, int t) {
+        /**
+         * check if the number of neighbor of the cell at the i,j position is above (>=) the threshold
+         * @param i i position on the grid ( i row)
+         * @param j j position on the grid ( j col)
+         * @param t the threshold value to compare
+         * @return a boolean true if the number of neighbor is >= to the threshold, false else
+         */
         int cmp = 0;
         for (int k = 0; k <= 2; k++) {
             int l = (int) Math.ceil(k / 2.0) % 2;
@@ -46,6 +55,13 @@ public class Grid {
     }
 
     private boolean neighborhoodBellowThresh( int i, int j, int t) {
+        /**
+         * check if the number of neighbor of the cell at the i,j position is under (<=) the threshold
+         * @param i i position on the grid ( i row)
+         * @param j j position on the grid ( j col)
+         * @param t the threshold value to compare
+         * @return a boolean true if the number of neighbor is <= to the threshold , false else
+         */
         int cmp = 0;
         for (int k = 0; k <= 2; k++) {
             int l = (int) Math.ceil(k / 2.0);
@@ -63,6 +79,10 @@ public class Grid {
     
     
     public ArrayList<Integer[]> selectAliveCellIndex() {
+        /**
+         * catch the positions of the alive cells from the grid
+         * @return a ArrayList of couple of integers postions (row,col)
+         */
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         for (int i = 0; i < nrow; i++) {
             for (int j = 0; j < ncol; j++) {
@@ -73,6 +93,12 @@ public class Grid {
     }
 
     public ArrayList<Integer[]> selectEmptyNeighborIndex( int i, int j) {
+        /**
+         * catch the positions of the unhabited cases close to an alive cell at the position i,j
+         * @param i ith row of the alive cell to analyse
+         * @param j jth col of the alive cell to analyse
+         * @return a ArrayList of couple of integers postions (row,col)
+         */
         ArrayList<Integer[]> Ln = new ArrayList<Integer[]>();
         for (int k = 0; k <= 2; k++) {
             int l = (int) Math.ceil(k / 2.0);
@@ -88,7 +114,11 @@ public class Grid {
 
 
     public ArrayList<Integer[]> ListWillBorn(ArrayList<Integer[]> Lalive, int tmin,int tmax) {
-
+        /**
+         * catch the positions of the cases where a cell will born
+         * @param Lalive
+         * @return a ArrayList of couple of integers postions (row,col)
+         */
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         ArrayList<Integer[]> Ln;//list empty neighborhood
 

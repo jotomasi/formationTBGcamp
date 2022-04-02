@@ -283,8 +283,6 @@ public class Main extends Application {
                 }
         );
 
-        // Animation
-
         stage.setScene(scene);
         stage.show();
 
