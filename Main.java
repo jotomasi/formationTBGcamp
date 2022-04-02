@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.application.Application;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 
@@ -54,11 +55,26 @@ public class Main extends Application {
     };
 
     public void start(Stage stage) throws Exception {
+        //Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
+//        ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
+//                grid.getncol()*( sizeSquare+1)+ borderh +10+interCipher,borderv +20+6*stepwisev    );
+        //left + 5 * stepwise
+        int stepwise = 100;
+        int stepwisev = 30 ;
+        int left = borderh + 5;
+        int bottom = Math.max(nrow * (sizeSquare + 1) ,6*stepwisev)+ borderv + 10;
+        int interCipher = 210;
+
+        //init graphical resources
+        int addh= 400;
+        int addv = 100;
         Group root = new Group();
-        Scene scene = new Scene(root, ncol * sizeSquare + 700, nrow * sizeSquare + 150);
-        Canvas canvas = new Canvas(ncol * sizeSquare + 700, nrow * sizeSquare + 150);
+        Scene scene = new Scene(root, Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh, Math.max(nrow * sizeSquare, 6*stepwisev )+ addv);
+        Canvas canvas = new Canvas(Math.max(ncol * sizeSquare, 5*stepwise  ) + borderh + addh, Math.max(nrow * sizeSquare, 6*stepwisev ) + addv);
         root.getChildren().add(canvas);
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.rgb(250,250,220));
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stage.setTitle("Game Life on the Grid");
 
         //init grid and draw it
@@ -68,18 +84,13 @@ public class Main extends Application {
 
 
 
-        //create buttons
-        int left = borderh + 5;
-        int bottom = nrow * (sizeSquare + 1) + borderv + 10;
-        int stepwise = 100;
-        int stepwisev = 40;
-        int interCipher = 310;
+        //create buttons and comboboxes
 
         Button minForBird = buttonBottom("Min number of neighbors to bird: ",
-                ncol*(sizeSquare+1)+ borderh +10,borderv +20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,borderv +20);
         root.getChildren().add(minForBird);
         ComboBox<Integer> minForBirdcb = genCb(root,0,8,tbirthmin,
-                ncol*(sizeSquare+1)+ borderh +10+interCipher,borderv +20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+interCipher,borderv +20);
         minForBirdcb.setOnAction(e->{
             if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
                 minForBirdcb.getSelectionModel().select(tbirthmin);
@@ -89,10 +100,10 @@ public class Main extends Application {
         );
 
         Button maxForBird = buttonBottom("Max number of neighbors to bird: ",
-                ncol*(sizeSquare+1)+ borderh +10,borderv+stepwisev +20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,borderv+2*stepwisev +20);
         root.getChildren().add(maxForBird);
         ComboBox<Integer> maxForBirdcb = genCb(root,0,8,tbirthmax,
-                ncol *( sizeSquare +1)+ borderh +10+ interCipher,borderv + stepwisev +20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+ interCipher,borderv + 2*stepwisev +20);
 
         maxForBirdcb.setDisable(true);
         maxForBirdcb.setOnAction(e->{
@@ -104,10 +115,10 @@ public class Main extends Application {
         );
 
         Button minForDie = buttonBottom("Threshold  of loneliness: ",
-                ncol*(sizeSquare+1)+ borderh +10,borderv +2* stepwisev +20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,borderv +4* stepwisev +20);
         root.getChildren().add(minForDie);
         ComboBox<Integer> minForDiecb = genCb(root,0,8,tdeathLonelyness,
-                grid.getncol() * ( sizeSquare +1)+ borderh + 10 + interCipher,borderv+2*stepwisev+20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 + interCipher,borderv+4*stepwisev+20);
 
         minForDiecb.setOnAction(e->{
             if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
@@ -118,10 +129,11 @@ public class Main extends Application {
         );
 
         Button maxForDie = buttonBottom("Threshold of overpopulation: ",
-                ncol*(sizeSquare+1)+ borderh +10,borderv+3*stepwisev+20);
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,
+                borderv+6*stepwisev+20);
         root.getChildren().add(maxForDie);
         ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
-                grid.getncol()*( sizeSquare+1)+ borderh +10+interCipher,borderv +20+3*stepwisev    );
+                Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 +interCipher,borderv +20+6*stepwisev    );
         maxForDiecb.setOnAction(e->{
 
             if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
@@ -154,7 +166,6 @@ public class Main extends Application {
                 };
             }
         });
-
 
         //nextStep button
         Button nextStep = buttonBottom("NextStep", left + stepwise, bottom);
@@ -207,10 +218,6 @@ public class Main extends Application {
         });
 
 
-
-
-
-
         Button backUp = buttonBottom("BackUp", left + 5 * stepwise, bottom);
         root.getChildren().add(backUp);
 
@@ -231,8 +238,6 @@ public class Main extends Application {
         );
 
         // Animation
-
-
 
         stage.setScene(scene);
         stage.show();
@@ -260,8 +265,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
     }
-
-
 
     }
 
