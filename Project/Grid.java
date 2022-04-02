@@ -116,8 +116,10 @@ public class Grid {
     public ArrayList<Integer[]> ListWillBorn(ArrayList<Integer[]> Lalive, int tmin,int tmax) {
         /**
          * catch the positions of the cases where a cell will born
-         * @param Lalive
-         * @return a ArrayList of couple of integers postions (row,col)
+         * @param Lalive Arraylist of the couples position of the current alive cells
+         * @param tmin minimal number of alive neighbor to born
+         * @param tmin maximal number of alive neighbor to born
+         * @return a ArrayList of couple of integers positions (row,col) of the case where a cell will born
          */
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         ArrayList<Integer[]> Ln;//list empty neighborhood
@@ -133,7 +135,13 @@ public class Grid {
     }
 
     public ArrayList<Integer[]> ListWillDead( ArrayList<Integer[]> Lalive, int tmin, int tmax) {
-
+/**
+ * catch the positions of the cases where a cell will die
+ * @param Lalive Arraylist of the couples position of the current alive cells
+ * @param tmin minimal number of alive neighbor to die
+ * @param tmin maximal number of alive neighbor to die
+ * @return a ArrayList of couple of integers positions (row,col) of the case where a cell will die
+ */
         ArrayList<Integer[]> L = new ArrayList<Integer[]>();
         ArrayList<Integer[]> Ln;//list empty neighborhood
 
