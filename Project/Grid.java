@@ -13,8 +13,6 @@ public class Grid {
         //set cols and rows
         if(c>0)setncol(c);
         if(l>0)setnrow(l);
-
-
         // create the  Array of Cells
         grid = new Cell[nrow][ncol];
         for(int i = 0; i<nrow ; i++){

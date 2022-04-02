@@ -1,3 +1,4 @@
+import Project.Graph;
 import Project.Grid;
 import javafx.animation.AnimationTimer;
 import javafx.beans.Observable;
@@ -71,21 +72,15 @@ public class Main extends Application {
 
     //graphics functions
     private void paintGrid(GraphicsContext gc, Grid grid) {
-        int r;
-        int g;
-        int b;
+        int r; int g; int b;
         for (int i = 0; i < grid.getnrow(); i++) {
             for (int j = 0; j < grid.getncol(); j++) {
 
                 if (!grid.getcell(i, j).getLive()) {
                     // gray no life here
-                    r = 150;
-                    g = 150;
-                    b = 150;
+                    r = 150; g = 150; b = 150;
                 } else { //yellow alive
-                    r = 200;
-                    g = 120;
-                    b = 0;
+                    r = 200; g = 120; b = 0;
                 }
                 gc.setFill(Color.rgb(r, g, b));
                 gc.fillRect(borderh + j * (sizeSquare + 1), borderv + i * (sizeSquare + 1), sizeSquare, sizeSquare);
@@ -94,21 +89,15 @@ public class Main extends Application {
     }
 
     private void updateCell(GraphicsContext gc, Grid grid, int i, int j) {
-        int r;
-        int g;
-        int b;
+        int r; int g; int b;
         int imod = Math.floorMod(i, grid.getnrow());
         int jmod = Math.floorMod(j, grid.getncol());
         grid.getcell(i, j).setLive(!grid.getcell(imod, j).getLive());
         if (!grid.getcell(i, j).getLive()) {
             // gray no life here
-            r = 150;
-            g = 150;
-            b = 150;
+            r = 150; g = 150; b = 150;
         } else { //yellow alive
-            r = 200;
-            g = 120;
-            b = 0;
+            r = 200; g = 120; b = 0;
         }
         gc.setFill(Color.rgb(r, g, b));
         gc.fillRect(borderh + jmod * (sizeSquare + 1), borderv + imod * (sizeSquare + 1), sizeSquare, sizeSquare);
@@ -116,9 +105,7 @@ public class Main extends Application {
     }
 
     private void updateBornedCell(GraphicsContext gc, Grid grid, int i, int j) {
-        int r = 200;
-        int g = 120;
-        int b = 0;
+        int r = 200; int g = 120; int b = 0;
         int imod = Math.floorMod(i, grid.getnrow());
         int jmod = Math.floorMod(j, grid.getncol());
         grid.getcell(i, j).setLive(true);
@@ -128,9 +115,7 @@ public class Main extends Application {
     }
 
     private void updateDeadCell(GraphicsContext gc, Grid grid, int i, int j) {
-        int r = 150;
-        int g = 150;
-        int b = 150;
+        int r = 150; int g = 150; int b = 150;
         int imod = Math.floorMod(i, grid.getnrow());
         int jmod = Math.floorMod(j, grid.getncol());
         grid.getcell(i, j).setLive(false);
@@ -140,9 +125,7 @@ public class Main extends Application {
     }
 
     private void resetCellByClick(GraphicsContext gc, Grid grid) {
-        int r = 150;
-        int g = 150;
-        int b = 150;
+        int r = 150; int g = 150; int b = 150;
         for (int i = 0; i < grid.getnrow(); i++) {
             for (int j = 0; j < grid.getncol(); j++) {
                 grid.getcell(i, j).setLive(false);
@@ -194,7 +177,8 @@ public class Main extends Application {
         Grid grid = new Grid(nrow, ncol);
         //grid.getcell(0, 10).setLive(true);
         //grid.getcell(6, 10).setLive(true);
-        paintGrid(gc, grid);
+        Graph gr  = new Graph(gc, ncol, nrow, sizeSquare, borderv,borderh);
+        gr.paintGrid(grid);
 
 
 
