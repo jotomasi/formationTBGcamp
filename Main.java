@@ -29,7 +29,10 @@ public class Main extends Application {
     private int tbirthmax = 3;// maximal (>= nb neighbor) number of alive neighbors to birth at a certain position
     private int tdeathLonelyness = 1;// minimal (<= nb neighbor) number of alive neighbors to die of lonelyness at a certain position
     private int tdeathOverpopulated = 4;// maximal (>= nb neighbor) number of alive neighbors to die of over population at a certain position
-
+    private boolean binfbird = true;
+    private boolean bsupbird = true;
+    private boolean binfdie = true;
+    private boolean bsupdie = true;
     // button creation function
     private Button buttonBottom(String strings, int left, int bottom) {
         /**
@@ -125,13 +128,15 @@ public class Main extends Application {
         root.getChildren().add(minForBird);
         ComboBox<Integer> minForBirdcb = genCb(root,0,8,tbirthmin,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+interCipher,borderv +20);
-        minForBirdcb.setOnAction(e->{ //don't allow forbidden values
-            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
-                minForBirdcb.getSelectionModel().select(tbirthmin);
-            }
-            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
-        }
-        );
+//        minForBirdcb.setOnAction(e->{ //don't allow forbidden values
+//            if(minForBirdcb.getSelectionModel().getSelectedItem()>tbirthmax) {
+//                minForBirdcb.getSelectionModel().select(tbirthmin);
+//            }
+//            else tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem()
+//                    ;
+//        }
+//        );
+
 
         Button maxForBird = buttonBottom("Max number of neighbors to bird: ",
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,borderv+2*stepwisev +20);
@@ -140,11 +145,31 @@ public class Main extends Application {
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10+ interCipher,borderv + 2*stepwisev +20);
 
         maxForBirdcb.setDisable(true);
-        maxForBirdcb.setOnAction(e->{//don't allow forbidden values
-            if(maxForBirdcb.getSelectionModel().getSelectedItem()<tbirthmin) {
-                maxForBirdcb.getSelectionModel().select(tbirthmax);
-            }
-            else tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
+
+        maxForBirdcb.setOnAction(actionEvent -> {
+                    if (binfbird) {
+                        tbirthmax = maxForBirdcb.getSelectionModel().getSelectedItem();
+                        bsupbird = false;
+                        minForBirdcb.getItems().clear();
+                        if (tbirthmin > tbirthmax) tbirthmin = tbirthmax;
+                        for (int i = 0; i <= 8; i++) minForBirdcb.getItems().add(i);
+                        minForBirdcb.getSelectionModel().select(tbirthmin);
+                        bsupbird = true;
+
+                    }
+                }
+        );
+        minForBirdcb.setOnAction(actionEvent -> {
+                    if(bsupbird) {
+                        tbirthmin = minForBirdcb.getSelectionModel().getSelectedItem();
+                        binfbird = false;
+                        maxForBirdcb.getItems().clear();
+                        if (tbirthmin > tbirthmax) tbirthmax = tbirthmin;
+                        for (int i = 0; i <= 8; i++) maxForBirdcb.getItems().add(i);
+                        maxForBirdcb.getSelectionModel().select(tbirthmax);
+                        binfbird = true;
+                    }
+
         }
         );
 
@@ -154,13 +179,7 @@ public class Main extends Application {
         ComboBox<Integer> minForDiecb = genCb(root,0,8,tdeathLonelyness,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 + interCipher,borderv+4*stepwisev+20);
 
-        minForDiecb.setOnAction(e->{//don't allow forbidden values
-            if(minForDiecb.getSelectionModel().getSelectedItem()>tdeathOverpopulated) {
-                minForDiecb.getSelectionModel().select(tdeathLonelyness);
-            }
-            else tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
-        }
-        );
+
 
         Button maxForDie = buttonBottom("Threshold of overpopulation: ",
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10,
@@ -168,15 +187,32 @@ public class Main extends Application {
         root.getChildren().add(maxForDie);
         ComboBox<Integer> maxForDiecb = genCb(root,0,8,tdeathOverpopulated,
                 Math.max(ncol*(sizeSquare+1) , 6*stepwise)+ borderh +10 +interCipher,borderv +20+6*stepwisev    );
-        maxForDiecb.setOnAction(e->{//don't allow forbidden values
+        maxForDiecb.setOnAction(actionEvent -> {
+                    if(binfdie) {
+                        tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
+                        bsupdie = false;
+                        minForDiecb.getItems().clear();
+                        if (tdeathLonelyness > tdeathOverpopulated) tdeathLonelyness = tdeathOverpopulated;
+                        for (int i = 0; i <= 8; i++) minForDiecb.getItems().add(i);
+                        minForDiecb.getSelectionModel().select(tdeathLonelyness);
+                        bsupdie = true;
+                    }
 
-            if(maxForDiecb.getSelectionModel().getSelectedItem()<tdeathLonelyness) {
-                maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
-            }
-            else tdeathOverpopulated = maxForDiecb.getSelectionModel().getSelectedItem();
-        }
+                }
         );
+        minForDiecb.setOnAction(actionEvent -> {
+                    if(bsupdie) {
+                        tdeathLonelyness = minForDiecb.getSelectionModel().getSelectedItem();
+                        binfdie = false;
+                        maxForDiecb.getItems().clear();
+                        if (tdeathLonelyness > tdeathOverpopulated) tdeathOverpopulated = tdeathLonelyness;
+                        for (int i = 0; i <= 8; i++) maxForDiecb.getItems().add(i);
+                        maxForDiecb.getSelectionModel().select(tdeathOverpopulated);
+                        binfdie = true;
+                    }
 
+                }
+        );
 
         // create button below the grids
 
