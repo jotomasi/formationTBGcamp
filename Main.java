@@ -20,7 +20,7 @@ public class Main extends Application {
 
     private int ncol = 40;//number of columns of the grid
     private int nrow = 20;//number of row of the grid
-    private int sizeSquare = 15;// square size of the cell from the grid
+    private int sizeSquare = 20;// square size of the cell from the grid
     private int borderv = 10; // vertical gap between the top of the scene and the grid
     private int borderh = 20;// horizontal gap between the left border of the scene and the grid
     private boolean isrunning = false;// value catching click on start  and reset buttons
@@ -99,7 +99,7 @@ public class Main extends Application {
         int bottom = Math.max(nrow * (sizeSquare + 1) ,6*stepwisev)+ borderv + 10;// y positon of the buttons bellow the grid
         int interCipher = 210;// gap between the button and comboboxes at the rigth of the grid
         int addh= 400;// add a horizontal gap for button
-        int addv = 100;// add a vertical gap for button
+        int addv = 150;// add a vertical gap for button
         long timegap = (long) 0.5e9;// gap of time between 2 animations while running (started)
 
         //init graphical resources
